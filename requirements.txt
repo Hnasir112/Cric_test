@@ -1,0 +1,6 @@
+# Core computer-vision stack for the cricket net-session analyzer.
+# Ultralytics provides BOTH object detection (ball/bat) and pose (batsman skeleton).
+ultralytics>=8.3.0      # YOLOv8 models (detection + pose)
+opencv-python>=4.10.0   # video read/write, drawing overlays
+numpy>=1.26.0           # array math
+PyYAML>=6.0             # reading config.yaml

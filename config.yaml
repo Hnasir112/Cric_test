@@ -1,0 +1,23 @@
+# Configuration for the cricket net-session analyzer.
+# Edit these values instead of touching the code.
+
+# Which device to run the neural networks on.
+#   "cpu"  -> always works, slower
+#   "cuda" -> use the NVIDIA GPU (faster, needs a CUDA build of torch)
+device: cpu
+
+# Model weights. "n" = nano (smallest/fastest), good for a 2 GB GPU.
+# Ultralytics downloads these automatically on first run.
+pose_model: yolov8n-pose.pt      # batsman body skeleton (17 keypoints)
+object_model: yolov8n.pt         # general objects (we filter to ball + bat)
+
+# Confidence threshold: ignore detections the model is less sure about than this.
+confidence: 0.25
+
+# COCO class ids we care about as cricket stand-ins (no custom training yet):
+#   32 = "sports ball"   -> the cricket ball
+#   34 = "baseball bat"  -> the cricket bat
+# Later we'll train a proper cricket model and replace these.
+object_classes:
+  ball: 32
+  bat: 34
