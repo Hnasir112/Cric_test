@@ -13,6 +13,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+import cv2
+
 from . import annotate
 from .objects import ObjectDetector
 from .pose import PoseEstimator
@@ -27,6 +29,7 @@ class PipelineConfig:
     confidence: float = 0.25
     object_classes: dict[str, int] | None = None
     max_frames: int | None = None   # stop early (handy for quick tests)
+    show: bool = False              # open a live preview window while processing
 
 
 def analyze(
@@ -60,6 +63,13 @@ def analyze(
                 annotate.draw_hud(frame.image, frame.index, frame.timestamp)
                 writer.write(frame.image)
 
+                # Live preview: show the annotated frame in a window. Press 'q'
+                # (or Esc) to stop early; the video/JSON saved so far are kept.
+                if config.show:
+                    cv2.imshow("cric tracking - press q to quit", frame.image)
+                    if cv2.waitKey(1) & 0xFF in (ord("q"), 27):
+                        break
+
                 # Save the raw numbers for later analytics.
                 records.append({
                     "frame": frame.index,
@@ -74,6 +84,9 @@ def analyze(
 
                 if frame.index % 25 == 0:
                     print(f"  processed frame {frame.index}...")
+
+    if config.show:
+        cv2.destroyAllWindows()
 
     Path(output_data).parent.mkdir(parents=True, exist_ok=True)
     with open(output_data, "w") as f:

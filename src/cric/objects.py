@@ -37,10 +37,19 @@ class ObjectDetector:
         self.model = YOLO(model_path)
         self.device = device
         self.confidence = confidence
-        # Map our friendly label -> COCO class id.
-        self.class_map = class_map or {"ball": 32, "bat": 34}
-        # Reverse map (id -> our label) for quick lookup while filtering.
-        self._id_to_label = {v: k for k, v in self.class_map.items()}
+
+        if class_map:
+            # Explicit mapping (e.g. COCO stand-ins {"ball": 32, "bat": 34}):
+            # only keep these class ids and rename them to our friendly labels.
+            self.class_map = class_map
+            self._id_to_label = {v: k.lower() for k, v in class_map.items()}
+            self._filter_ids = list(class_map.values())
+        else:
+            # No mapping given -> this is a custom-trained model. Trust every
+            # class it knows and use the model's own names (lower-cased).
+            self.class_map = None
+            self._id_to_label = {i: n.lower() for i, n in self.model.names.items()}
+            self._filter_ids = None  # don't filter; keep all classes
 
     def detect(self, image: np.ndarray) -> list[Detection]:
         """Return all ball/bat detections in one frame."""
@@ -48,7 +57,7 @@ class ObjectDetector:
             image,
             device=self.device,
             conf=self.confidence,
-            classes=list(self.class_map.values()),  # only run on classes we want
+            classes=self._filter_ids,  # None = keep every class the model knows
             verbose=False,
         )
         result = results[0]

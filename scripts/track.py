@@ -36,6 +36,8 @@ def main() -> None:
     parser.add_argument("--config", default=str(ROOT / "config.yaml"))
     parser.add_argument("--device", help="override device: cpu or cuda")
     parser.add_argument("--max-frames", type=int, help="process only N frames")
+    parser.add_argument("--show", action="store_true",
+                        help="open a live preview window while processing")
     args = parser.parse_args()
 
     cfg = yaml.safe_load(open(args.config))
@@ -53,6 +55,7 @@ def main() -> None:
         confidence=cfg.get("confidence", 0.25),
         object_classes=cfg.get("object_classes"),
         max_frames=args.max_frames,
+        show=args.show,
     )
 
     print(f"Analyzing {input_path} on device={config.device} ...")

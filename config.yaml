@@ -17,7 +17,15 @@ confidence: 0.25
 # COCO class ids we care about as cricket stand-ins (no custom training yet):
 #   32 = "sports ball"   -> the cricket ball
 #   34 = "baseball bat"  -> the cricket bat
-# Later we'll train a proper cricket model and replace these.
 object_classes:
   ball: 32
   bat: 34
+
+# ---------------------------------------------------------------------------
+# WHEN YOU'VE TRAINED A CUSTOM CRICKET MODEL:
+#   1. point object_model at the trained weights, e.g.:
+#        object_model: runs/detect/cricket/weights/best.pt
+#   2. delete (or comment out) the whole object_classes block above.
+# With object_classes removed, the tracker auto-uses the custom model's own
+# classes (Ball, Bat, ...) instead of the COCO stand-ins.
+# ---------------------------------------------------------------------------

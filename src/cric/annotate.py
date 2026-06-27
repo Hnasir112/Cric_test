@@ -14,7 +14,10 @@ JOINT_COLOR = (0, 200, 255)      # amber
 BOX_COLORS = {
     "ball": (0, 0, 255),         # red
     "bat": (255, 128, 0),        # blue-ish
+    "batsman": (0, 255, 255),    # yellow (custom model may emit this class)
+    "stumps": (255, 0, 255),     # magenta
 }
+DEFAULT_BOX_COLOR = (255, 255, 255)
 
 # Don't draw a keypoint/limb we're not confident about (avoids junk lines).
 MIN_KEYPOINT_CONF = 0.30
@@ -45,7 +48,7 @@ def draw_detections(image: np.ndarray, detections: list[Detection]) -> None:
     """Draw ball/bat bounding boxes with labels, in place."""
     for det in detections:
         x1, y1, x2, y2 = map(int, det.box)
-        color = BOX_COLORS.get(det.label, (255, 255, 255))
+        color = BOX_COLORS.get(det.label.lower(), DEFAULT_BOX_COLOR)
         cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
         text = f"{det.label} {det.confidence:.2f}"
         cv2.putText(image, text, (x1, max(0, y1 - 6)),
