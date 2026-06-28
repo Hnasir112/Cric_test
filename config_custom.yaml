@@ -1,0 +1,7 @@
+# Test config that uses the custom-trained cricket detector.
+# object_classes is intentionally omitted, so the tracker uses the model's own
+# classes (Ball, Bat, Batsman) instead of the COCO stand-ins.
+device: cpu
+pose_model: yolov8n-pose.pt
+object_model: models/cricket_best.pt
+confidence: 0.25
